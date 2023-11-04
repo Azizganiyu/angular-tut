@@ -1,1 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+body{
+  background-color: rgb(240, 240, 240);
+  font-family: 'Poppins';
+}
+.card{
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 50px 0;
+  min-width: 400px;
+
+  .header{
+    font-weight: bold;
+    margin-bottom: 30px;
+    font-size: 1.4em;
+  }
+}
+
+.form{
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}

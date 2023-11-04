@@ -1,0 +1,48 @@
+<h3>Form Control</h3>
+
+<div class="card">
+  <div class="header">Reactive Form</div>
+
+  <div class="body">
+    <input type="text" [formControl]="firstName" />
+    <p>{{ firstName.value }}</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="header">Template Driven Form</div>
+
+  <div class="body">
+    <input type="text" [(ngModel)]="lastName" />
+    <p>{{ lastName }}</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="header">Form Group</div>
+
+  <div class="body">
+    <form [formGroup]="profileForm" (ngSubmit)="profileSubmit()">
+      <div class="form">
+        <label for="">First name</label>
+        <input type="text" formControlName="firstName"  />
+        <p>{{ pf.firstName }}</p>
+      </div>
+      <div class="form">
+        <label for="">Last name</label>
+        <input type="text" formControlName="lastName" />
+        <p>{{ pf.lastName }}</p>
+      </div>
+      <ng-container formGroupName="address">
+        <div class="form">
+          <label for="">Street</label>
+          <input type="text" formControlName="street" />
+          <p>{{ pf.address?.street }}</p>
+        </div>
+      </ng-container>
+      <div class="form">
+        <button [disabled]="!profileForm.valid" type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
