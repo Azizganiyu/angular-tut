@@ -1,0 +1,229 @@
+<div class="card">
+  <div class="header">Form Array</div>
+
+  <div class="body">
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <!-- this is the form label -->
+      <div class="form">
+        <label for="label">Label</label>
+        <div>
+          <input id="label" type="text" formControlName="label" />
+        </div>
+        <div
+          *ngIf="
+            form.controls['label'].invalid &&
+            (form.controls['label'].dirty || form.controls['label'].touched)
+          "
+        >
+          <div *ngIf="form.controls['label']?.hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+
+      <!-- This is a description of the form which will show in an angle bracket -->
+      <div class="form">
+        <label for="description">Description</label>
+        <div>
+          <input id="description" type="text" formControlName="description" />
+        </div>
+      </div>
+
+      <!-- This is the name of the form which also serve as the key, should be in all lowercases and no spaces -->
+      <div class="form">
+        <label for="name"
+          >Name
+          <span style="font-size: 0.8em"
+            >[No spaces, special character or numbers]</span
+          ></label
+        >
+        <div>
+          <input id="name" type="text" formControlName="name" />
+        </div>
+        <div
+          *ngIf="
+            form.controls['name'].invalid &&
+            (form.controls['name'].dirty || form.controls['name'].touched)
+          "
+        >
+          <div *ngIf="form.controls['name']?.hasError('required')">
+            Required
+          </div>
+          <div *ngIf="form.controls['name']?.hasError('pattern')">
+            Invalid name
+          </div>
+        </div>
+      </div>
+
+      <!-- this allows you to choose the form type -->
+      <div class="form">
+        <label for="type">Type</label>
+        <div>
+          <select id="type" formControlName="type">
+            <option [value]="null">Select</option>
+            <option [value]="item" *ngFor="let item of types">
+              {{ item }}
+            </option>
+          </select>
+        </div>
+        <div
+          *ngIf="
+            form.controls['type'].invalid &&
+            (form.controls['type'].dirty || form.controls['type'].touched)
+          "
+        >
+          <div *ngIf="form.controls['type']?.hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+
+      <!-- decide if the field should be optional or required -->
+      <div class="form">
+        <ul style="list-style-type: none; margin: 0; padding: 0">
+          <li>
+            <input type="checkbox" formControlName="optional" />
+            <span>Optional</span>
+          </li>
+        </ul>
+      </div>
+    </form>
+
+    <!-- if a select, radio or checkbox type is selected, we need to set the possible values that will be in the field -->
+    <!-- Note that this uses a template driven form to collect the options which is why it placed after the <form></form> tag,
+    since template driven form does not work inside them. -->
+    <div
+      class="form"
+      *ngIf="field.type && ['checkbox', 'radio', 'select'].includes(field.type)"
+    >
+      <input type="text" [(ngModel)]="inputValue" />
+      <button (click)="addValue()" type="button" style="margin-top: 10px">
+        Add value &nbsp;&nbsp; +
+      </button>
+      <ul *ngIf="field.values && field.values!.length > 0">
+        <li *ngFor="let value of field.values; index as i">
+          <span>{{ value }}</span>
+          <button (click)="removeValue(i)" type="button">X</button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- this shows the preview of the form we are creating -->
+    <div style="margin-top: 50px">
+      <form [formGroup]="previewForm">
+        <div class="form">
+          <!-- set label -->
+          <label for="label"
+            >{{ field.label }}
+            <span style="font-size: 0.8em" *ngIf="field.description"
+              >[{{ field.description }}]</span
+            ></label
+          >
+
+          <!-- show input box if type fits the criteria, and just set the type -->
+          <div
+            *ngIf="
+              field.type &&
+              [
+                'text',
+                'email',
+                'number',
+                'url',
+                'date',
+                'color',
+                'file'
+              ].includes(field.type)
+            "
+          >
+            <input [type]="field.type" formControlName="value" />
+          </div>
+
+          <!-- show checkbox if type is checkbox -->
+          <div
+            *ngIf="
+              field.type &&
+              ['checkbox'].includes(field.type) &&
+              field.values &&
+              field.values!.length > 0
+            "
+          >
+            <div *ngFor="let value of field.values">
+              <ul>
+                <li>
+                  <input
+                    [name]="field.name"
+                    formArrayName="value"
+                    (change)="onCheckboxChange($event)"
+                    [value]="value"
+                    type="checkbox"
+                  />
+                  <span>{{ value }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+
+          <!-- show radio if type is radio -->
+          <div
+            *ngIf="
+              field.type &&
+              ['radio'].includes(field.type) &&
+              field.values &&
+              field.values!.length > 0
+            "
+          >
+            <div *ngFor="let value of field.values">
+              <ul>
+                <li>
+                  <input
+                    [value]="value"
+                    type="radio"
+                    [formControlName]="'value'"
+                  />
+                  <span>{{ value }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- show textarea if type is textarea -->
+          <div *ngIf="field.type && ['textarea'].includes(field.type)">
+            <textarea formControlName="value"></textarea>
+          </div>
+
+          <!-- show select if type is select -->
+          <div *ngIf="field.type && ['select'].includes(field.type)">
+            <select formControlName="value">
+              <option [value]="null">Select</option>
+              <option [value]="item" *ngFor="let item of field.values">
+                {{ item }}
+              </option>
+            </select>
+          </div>
+          <div
+            *ngIf="
+              previewForm.controls['value'].invalid &&
+              (previewForm.controls['value'].dirty ||
+                previewForm.controls['value'].touched)
+            "
+          >
+            <div *ngIf="previewForm.controls['value']?.hasError('required')">
+              Required
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 30px">
+          <pre>{{ field | json }}</pre>
+        </div>
+
+        <div style="margin-top: 30px">
+          <h6>Result</h6>
+          <p *ngIf="field.name">{{ field.name }} = {{ getValue | json }}</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
