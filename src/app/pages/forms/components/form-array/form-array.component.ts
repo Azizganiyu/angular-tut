@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-interface FormField {
+export interface FormField {
   label?: string | null;
   name?: string | null;
   description?: string | null;
@@ -22,6 +22,7 @@ export class FormArrayComponent implements OnInit {
     'textarea',
     'number',
     'checkbox',
+    'password',
     'radio',
     'select',
     'date',
@@ -30,15 +31,16 @@ export class FormArrayComponent implements OnInit {
     'file',
   ];
 
-  inputValue: string = ''
+  inputValue: string = '';
 
   field: FormField;
   previewForm = this.formBuilder.group({
-    value: ['John Doe'],
+    value: [''],
   });
 
-  nameFormat = '^[a-z_]{4,15}$';
+  state: any = null;
 
+  nameFormat = '^[a-z_]{3,15}$';
   form = this.formBuilder.group({
     label: ['', [Validators.required]],
     name: ['', [Validators.required, Validators.pattern(this.nameFormat)]],
@@ -47,6 +49,9 @@ export class FormArrayComponent implements OnInit {
     optional: [false],
     values: [[]],
   });
+
+  savedForm: FormField[] = [];
+  saving: boolean = false;
 
   constructor(private formBuilder: FormBuilder) {
     this.field = this.form.value;
@@ -64,7 +69,7 @@ export class FormArrayComponent implements OnInit {
         }
         if (
           this.form.get('type')?.value == 'checkbox' &&
-          this.previewForm.get('value')?.value!.constructor != Array
+          (this.previewForm.get('value')?.value! as any).constructor != Array
         ) {
           this.previewForm.get('value')?.patchValue([] as any);
         }
@@ -91,7 +96,29 @@ export class FormArrayComponent implements OnInit {
   }
 
   save() {
-
+    let error = false;
+    let errorMessage = '';
+    this.savedForm.forEach((data) => {
+      if (data.name == this.field.name) {
+        error = true;
+        errorMessage = 'Name already exist';
+      }
+      if (data.label == this.field.label) {
+        error = true;
+        errorMessage = 'Label already exist';
+      }
+    });
+    if (error) {
+      alert(errorMessage);
+      return;
+    }
+    this.saving = true;
+    this.savedForm = this.savedForm.concat([this.field]);
+    this.form.reset();
+    alert('saved!');
+    setTimeout(() => {
+      this.saving = false;
+    }, 1000);
   }
 
   removeValue(index: any) {
@@ -115,9 +142,15 @@ export class FormArrayComponent implements OnInit {
   get getValue() {
     const value: any = this.previewForm.get('value')?.value;
     if (this.field.type == 'file') {
-      const split = value.split('\\');
-      return split[split.length - 1];
+      // const split = value.split('');
+      // return split[split.length - 1];
+      return 'file selected';
     }
     return value;
+  }
+
+  stateChanged(e: any) {
+    console.log(e);
+    this.state = e;
   }
 }

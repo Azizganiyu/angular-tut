@@ -6,20 +6,23 @@ import { AppComponent } from './app.component';
 import { FormsComponent } from './pages/forms/forms.component';
 import { FormControlComponent } from './pages/forms/components/form-control/form-control.component';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormArrayComponent } from './pages/forms/form-array/form-array.component';
+import { FormArrayComponent } from './pages/forms/components/form-array/form-array.component';
+import { DynamicFormComponent } from './pages/forms/components/dynamic-form/dynamic-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FormsComponent,
     FormControlComponent,
-    FormArrayComponent
+    FormArrayComponent,
+    DynamicFormComponent
   ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+
   ],
   providers: [],
   bootstrap: [AppComponent]

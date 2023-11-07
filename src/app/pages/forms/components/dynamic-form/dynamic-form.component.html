@@ -1,0 +1,105 @@
+<form [formGroup]="form">
+  <ng-container formArrayName="entries">
+    <div
+      class="form"
+      *ngFor="let field of entries.controls; index as i"
+      [formGroupName]="i"
+    >
+      <label for="label"
+        >{{ field.value.label }}
+        <span style="font-size: 0.8em" *ngIf="field.value.description"
+          >[{{ field.value.description }}]</span
+        ></label
+      >
+      <div
+        class="form-wrapper"
+        *ngIf="
+          field.value.type &&
+          ['text', 'email', 'number', 'url', 'date', 'color', 'password'].includes(
+            field.value.type
+          )
+        "
+      >
+        <input [type]="field.value.type" formControlName="value" />
+      </div>
+      <div
+        class="form-wrapper"
+        *ngIf="field.value.type && ['file'].includes(field.value.type)"
+      >
+        <input
+          (change)="fileProgress($event, i)"
+          [type]="field.value.type"
+          formControlName="value"
+        />
+      </div>
+      <div
+        *ngIf="
+          field.value.type &&
+          ['checkbox'].includes(field.value.type) &&
+          field.value.values &&
+          field.value.values!.length > 0
+        "
+      >
+        <div *ngFor="let value of field.value.values" class="form-checkbox">
+          <ul>
+            <li>
+              <input
+                [name]="field.value.name"
+                formArrayName="value"
+                [checked]="checked(value, i)"
+                (change)="onCheckboxChange($event, i)"
+                [value]="value"
+                type="checkbox"
+              />
+              <span>{{ value }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        *ngIf="
+          field.value.type &&
+          ['radio'].includes(field.value.type) &&
+          field.value.values &&
+          field.value.values!.length > 0
+        "
+      >
+        <div *ngFor="let value of field.value.values" class="form-checkbox">
+          <ul>
+            <li>
+              <input [value]="value" type="radio" [formControlName]="'value'" />
+              <span>{{ value }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="form-wrapper"
+        *ngIf="field.value.type && ['textarea'].includes(field.value.type)"
+      >
+        <textarea formControlName="value"></textarea>
+      </div>
+      <div
+        class="form-wrapper"
+        *ngIf="field.value.type && ['select'].includes(field.value.type)"
+      >
+        <select formControlName="value">
+          <option [value]="item" *ngFor="let item of field.value.values">
+            {{ item }}
+          </option>
+        </select>
+      </div>
+      <div
+        *ngIf="
+          entries.controls[i].get('value')?.invalid &&
+          (entries.controls[i].get('value')?.dirty ||
+            entries.controls[i].get('value')?.touched)
+        "
+      >
+        <div style="color: red;" *ngIf="entries.controls[i].get('value')?.hasError('required')">
+          {{ field.value.label }} is Required
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</form>

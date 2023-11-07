@@ -2,7 +2,6 @@
   <div class="header">Form Array</div>
 
   <div class="body">
-
     <form [formGroup]="form" (ngSubmit)="save()">
       <!-- this is the form label -->
       <div class="form">
@@ -132,6 +131,7 @@
                 'url',
                 'date',
                 'color',
+                'password',
                 'file'
               ].includes(field.type)
             "
@@ -163,7 +163,6 @@
               </ul>
             </div>
           </div>
-
 
           <!-- show radio if type is radio -->
           <div
@@ -224,6 +223,43 @@
           <p *ngIf="field.name">{{ field.name }} = {{ getValue | json }}</p>
         </div>
       </form>
+
+      <button
+      (click)="save()"
+        type="button"
+        style="cursor: pointer; background-color: unset; padding: 10px 20px; border: 1px solid blue; border-radius: 5px"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="header">Saved Form</div>
+  <div class="body">
+    <div style="margin-top: 30px">
+      <pre>{{ savedForm | json }}</pre>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="header">Generated Form</div>
+  <div class="body">
+    <app-dynamic-form (stateChange)="stateChanged($event)" *ngIf="!saving" [fields]="savedForm"></app-dynamic-form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="header">Form result</div>
+  <div class="body">
+    <span style="color: green;" *ngIf="state && state.status">Form is valid</span>
+    <span style="color: red;" *ngIf="state && !state.status">Form is invalid</span>
+    <div style="margin-top: 40px;" *ngIf="state && state.data">
+      <p *ngFor="let item of state.data">
+        {{item.key}} = {{item.value}}
+      </p>
     </div>
   </div>
 </div>

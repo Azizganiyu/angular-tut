@@ -6,7 +6,7 @@ const routes: Routes = [
   {
     path: 'forms',
     component: FormsComponent,
-  }
+  },
 ];
 
 @NgModule({
